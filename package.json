@@ -1,0 +1,28 @@
+{
+  "name": "ImmutableDiff",
+  "version": "0.0.1",
+  "description": "Create RFC 6902 style patches between Immutable.JS data structures",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "keywords": [
+    "immutable.js",
+    "diff",
+    "jsondiff"
+  ],
+  "author": "Breno Ferreira",
+  "license": "MIT",
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "gulp": "^3.8.9",
+    "gulp-mocha": "^1.1.1",
+    "gulp-util": "^3.0.1"
+  },
+  "dependencies": {
+    "immutable": "^3.0.2"
+  }
+}
