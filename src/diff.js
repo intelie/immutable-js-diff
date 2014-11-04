@@ -7,7 +7,9 @@ var mapDiff = function(a, b){
   if(Immutable.is(a, b)){ return ops; }
 
   b.forEach(function(bValue, bKey){
-    if(!a.has(bKey)){ ops.push( op('add', bKey, bValue) ); }
+    var aHasBKey = a.has(bKey);
+    if(!aHasBKey){ ops.push( op('add', bKey, bValue) ); }
+    else if(aHasBKey && a.get(bKey) !== b.get(bKey)) { ops.push( op('replace', bKey, bValue) ); }
   });
 
   return ops;

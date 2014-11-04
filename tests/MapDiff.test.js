@@ -56,6 +56,27 @@ describe('Map diff', function(){
         return aKey !== bKey && aValue !== bValue ? 'ok' : false;
       }
     );
+
+    JSC.test(
+      'returns replace op when same attribute with different values',
+      function(veredict, aKey, aValue, bValue){
+        var map1 = Immutable.Map().set(aKey, aValue);
+        var map2 = Immutable.Map().set(aKey, bValue)
+
+        var result = diff.diff(map1, map2);
+        var expected = {op: 'replace', path: '/'+aKey, value: bValue};
+
+        return veredict(
+          result.length !== 0 &&
+          result.every(function(op){ return opsAreEqual(op, expected); })
+        );
+      },
+      [
+        JSC.character('a', 'z'),
+        JSC.integer(1, 50),
+        JSC.integer(51, 100)
+      ]
+    );
   });
 });
 
