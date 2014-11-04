@@ -22,6 +22,7 @@
 
     "describe": false,
     "it": false,
+    "before": false,
     "beforeEach": false,
     "afterEach": false,
     "sinon": false
