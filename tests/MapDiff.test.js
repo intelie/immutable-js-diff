@@ -47,14 +47,11 @@ describe('Map diff', function(){
         );
       },
       [
-        JSC.character('a', 'z'),
-        JSC.character('a', 'z'),
+        JSC.character('a', 'j'),
+        JSC.character('k', 'z'),
         JSC.integer(1, 100),
-        JSC.integer(1, 100)
-      ],
-      function(aKey, bKey, aValue, bValue){
-        return aKey !== bKey && aValue !== bValue ? 'ok' : false;
-      }
+        JSC.integer(101, 200)
+      ]
     );
 
     JSC.test(
