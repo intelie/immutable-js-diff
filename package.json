@@ -17,10 +17,10 @@
   "author": "Breno Ferreira",
   "license": "MIT",
   "devDependencies": {
-    "expect.js": "^0.3.1",
     "gulp": "^3.8.9",
     "gulp-mocha": "^1.1.1",
-    "gulp-util": "^3.0.1"
+    "gulp-util": "^3.0.1",
+    "jscheck": "^0.2.0"
   },
   "dependencies": {
     "immutable": "^3.0.2"

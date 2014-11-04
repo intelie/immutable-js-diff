@@ -2,27 +2,65 @@
 
 var diff = require('../src/diff');
 var Immutable = require('Immutable');
-var expect = require('expect.js');
+var JSC = require('jscheck');
 
 describe('Map diff', function(){
-  it('returns [] when equal', function(){
-    var map1 = Immutable.Map({a: 1});
-    var map2 = Immutable.Map({a: 1});
-
-    var result = diff.diff(map1, map2);
-
-    expect(result).to.be.empty();
+  before(function(){
+    JSC.on_report(function(report){
+      console.log(report);
+    });
   });
 
-  it('returns add op when missing attribute', function(){
-    var map1 = Immutable.Map({a: 1});
-    var map2 = Immutable.Map({a: 1, b:2});
+  it('check properties', function(){
+    JSC.test(
+      'returns [] when equal',
+      function(veredict, key, value){
+        var map1 = Immutable.Map().set(key, value);
+        var map2 = Immutable.Map().set(key, value);
 
-    var result = diff.diff(map1, map2);
-    var expected = [{op: 'add', path: '/b', value: 2}]
+        var result = diff.diff(map1, map2);
 
-    expect(result[0].op).to.be(expected[0].op);
-    expect(result[0].path).to.be(expected[0].path);
-    expect(result[0].value).to.be(expected[0].value);
+        return veredict(result.length === 0);
+      },
+      [
+        JSC.character('a', 'z'),
+        JSC.integer(1, 100)
+      ]
+    );
+
+
+    JSC.test(
+      'returns add op when missing attribute',
+      function(veredict, aKey, bKey, aValue, bValue){
+        var map1 = Immutable.Map().set(aKey, aValue);
+        var map2 = Immutable.Map()
+          .set(aKey, aValue)
+          .set(bKey, bValue);
+
+
+        var result = diff.diff(map1, map2);
+        var expected = {op: 'add', path: '/'+bKey, value: bValue};
+
+        return veredict(
+          result.length !== 0 &&
+          result.every(function(op){ return opsAreEqual(op, expected); })
+        );
+      },
+      [
+        JSC.character('a', 'z'),
+        JSC.character('a', 'z'),
+        JSC.integer(1, 100),
+        JSC.integer(1, 100)
+      ],
+      function(aKey, bKey, aValue, bValue){
+        return aKey !== bKey && aValue !== bValue ? 'ok' : false;
+      }
+    );
   });
 });
+
+var opsAreEqual = function(value, expected){
+  return value.op === expected.op &&
+      value.path === expected.path &&
+      value.value === expected.value;
+};
