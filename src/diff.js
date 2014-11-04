@@ -6,6 +6,10 @@ var mapDiff = function(a, b){
   var ops = [];
   if(Immutable.is(a, b)){ return ops; }
 
+  a.forEach(function(aValue, aKey){
+    if(!b.has(aKey)){ ops.push( op('remove', aKey) ); }
+  });
+
   b.forEach(function(bValue, bKey){
     var aHasBKey = a.has(bKey);
     if(!aHasBKey){ ops.push( op('add', bKey, bValue) ); }
@@ -16,6 +20,8 @@ var mapDiff = function(a, b){
 };
 
 var op = function(operation, key, value){
+  if(operation === 'remove') { return { op: operation, path: '/'+key }; }
+
   return { op: operation, path: '/'+key, value: value };
 };
 
