@@ -162,6 +162,33 @@ describe('Map diff', function(){
         })
       ]
     );
+
+    JSC.test(
+      'returns remove op when attribute removed in nested structure',
+      function(veredict, obj, obj2){
+        var map1 = Immutable.fromJS(obj).setIn(['b', 'd'], obj2.d);
+        var map2 = Immutable.fromJS(obj);
+
+        var result = diff.diff(map1, map2);
+        var expected = {op: 'remove', path: '/b/d'};
+
+        return veredict(
+          result.length !== 0 &&
+          result.every(function(op){ return opsAreEqual(op, expected); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.integer()
+          })
+        }),
+        JSC.object({
+          d: JSC.integer()
+        })
+      ]
+    );
   });
 });
 
