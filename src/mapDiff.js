@@ -2,7 +2,7 @@
 
 var Immutable = require('immutable');
 var utils = require('./utils');
-var addPath = utils.addPath,
+var appendPath = utils.appendPath,
               op = utils.op,
               isMap = utils.isMap;
 
@@ -14,22 +14,22 @@ var mapDiff = function(a, b, p){
 
   a.forEach(function(aValue, aKey){
     if(!b.has(aKey)){
-      ops.push( op('remove', addPath(path, aKey)) );
+      ops.push( op('remove', appendPath(path, aKey)) );
     }
     else if(isMap(b.get(aKey))){
-      ops = ops.concat(mapDiff(a.get(aKey), b.get(aKey), addPath(path, aKey)));
+      ops = ops.concat(mapDiff(a.get(aKey), b.get(aKey), appendPath(path, aKey)));
     }
   });
 
   b.forEach(function(bValue, bKey){
     if(!a.has(bKey)){
-      ops.push( op('add', addPath(path, bKey), bValue) );
+      ops.push( op('add', appendPath(path, bKey), bValue) );
     }
     else{
       var aValue = a.get(bKey);
       var areDifferentValues = (aValue !== bValue) && !isMap(aValue);
       if(areDifferentValues) {
-        ops.push(op('replace', addPath(path, bKey), bValue));
+        ops.push(op('replace', appendPath(path, bKey), bValue));
       }
     }
   });

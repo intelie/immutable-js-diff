@@ -2,7 +2,7 @@
 
 var Immutable = require('immutable');
 
-var addPath = function(path, key) {
+var appendPath = function(path, key) {
   return path + '/' + key;
 };
 
@@ -15,7 +15,7 @@ var op = function(operation, path, value){
 };
 
 module.exports = {
-  addPath: addPath,
+  appendPath: appendPath,
   isMap: isMap,
   op: op
 };
