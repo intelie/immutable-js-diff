@@ -21,32 +21,28 @@ describe('Map diff', function(){
   it('check properties', function(){
     JSC.test(
       'returns [] when equal',
-      function(veredict, key, value){
-        var map1 = Immutable.Map().set(key, value);
-        var map2 = Immutable.Map().set(key, value);
+      function(veredict, obj){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj);
 
         var result = diff.diff(map1, map2);
 
         return veredict(result.length === 0);
       },
       [
-        JSC.character('a', 'z'),
-        JSC.integer(1, 100)
+        JSC.object(5)
       ]
     );
 
 
     JSC.test(
       'returns add op when missing attribute',
-      function(veredict, aKey, bKey, aValue, bValue){
-        var map1 = Immutable.Map().set(aKey, aValue);
-        var map2 = Immutable.Map()
-          .set(aKey, aValue)
-          .set(bKey, bValue);
-
+      function(veredict, obj, obj2){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).set('key2', obj2.key2);
 
         var result = diff.diff(map1, map2);
-        var expected = {op: 'add', path: '/'+bKey, value: bValue};
+        var expected = {op: 'add', path: '/key2', value: obj2.key2};
 
         return veredict(
           result.length !== 0 &&
@@ -54,21 +50,23 @@ describe('Map diff', function(){
         );
       },
       [
-        JSC.character('a', 'j'),
-        JSC.character('k', 'z'),
-        JSC.integer(1, 100),
-        JSC.integer(101, 200)
+        JSC.object({
+          key: JSC.integer(1, 100)
+        }),
+        JSC.object({
+          key2: JSC.integer(101, 200)
+        })
       ]
     );
 
     JSC.test(
       'returns replace op when same attribute with different values',
-      function(veredict, aKey, aValue, bValue){
-        var map1 = Immutable.Map().set(aKey, aValue);
-        var map2 = Immutable.Map().set(aKey, bValue);
+      function(veredict, obj, newValue){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).set('key', newValue);
 
         var result = diff.diff(map1, map2);
-        var expected = {op: 'replace', path: '/'+aKey, value: bValue};
+        var expected = {op: 'replace', path: '/key', value: newValue};
 
         return veredict(
           result.length !== 0 &&
@@ -76,20 +74,21 @@ describe('Map diff', function(){
         );
       },
       [
-        JSC.character('a', 'z'),
-        JSC.integer(1, 50),
+        JSC.object({
+          key: JSC.integer(1, 50)
+        }),
         JSC.integer(51, 100)
       ]
     );
 
     JSC.test(
       'returns remove op when attribute is missing',
-      function(veredict, aKey, aValue, bValue){
-        var map1 = Immutable.Map().set(aKey, aValue);
+      function(veredict, obj){
+        var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.Map();
 
         var result = diff.diff(map1, map2);
-        var expected = {op: 'remove', path: '/'+aKey};
+        var expected = {op: 'remove', path: '/key'};
 
         return veredict(
           result.length !== 0 &&
@@ -97,9 +96,9 @@ describe('Map diff', function(){
         );
       },
       [
-        JSC.character('a', 'z'),
-        JSC.integer(1, 50),
-        JSC.integer(51, 100)
+        JSC.object({
+          key: JSC.integer(1, 50)
+        }),
       ]
     );
 
