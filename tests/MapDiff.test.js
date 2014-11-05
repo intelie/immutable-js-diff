@@ -98,7 +98,7 @@ describe('Map diff', function(){
       [
         JSC.object({
           key: JSC.integer(1, 50)
-        }),
+        })
       ]
     );
 
@@ -109,13 +109,32 @@ describe('Map diff', function(){
   });
 
   it('check nested structures', function(){
-    var map1 = Immutable.fromJS({a: 1, b: {c: 2}});
-    var map2 = Immutable.fromJS({a: 1, b: {c: 2, d: 3}});
+    JSC.test(
+      'returns add op when missing attribute in nested structure',
+      function(veredict, obj, obj2){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).setIn(['b', 'd'], obj2.d);
 
-    var result = diff.diff(map1, map2);
-    var expected = {op: 'add', path: '/b/d', value: 3};
+        var result = diff.diff(map1, map2);
+        var expected = {op: 'add', path: '/b/d', value: obj2.d};
 
-    assert.ok(result.every(function(op){ return opsAreEqual(op, expected); }));
+        return veredict(
+          result.length !== 0 &&
+          result.every(function(op){ return opsAreEqual(op, expected); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(1, 100),
+          b: JSC.object({
+            c: JSC.integer(1, 100)
+          })
+        }),
+        JSC.object({
+          d: JSC.integer(101, 200)
+        })
+      ]
+    );
   });
 });
 
