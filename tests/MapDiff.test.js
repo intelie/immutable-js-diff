@@ -51,10 +51,10 @@ describe('Map diff', function(){
       },
       [
         JSC.object({
-          key: JSC.integer(1, 100)
+          key: JSC.integer()
         }),
         JSC.object({
-          key2: JSC.integer(101, 200)
+          key2: JSC.integer()
         })
       ]
     );
@@ -75,9 +75,9 @@ describe('Map diff', function(){
       },
       [
         JSC.object({
-          key: JSC.integer(1, 50)
+          key: JSC.integer(1, 100)
         }),
-        JSC.integer(51, 100)
+        JSC.integer(101, 200)
       ]
     );
 
@@ -97,7 +97,7 @@ describe('Map diff', function(){
       },
       [
         JSC.object({
-          key: JSC.integer(1, 50)
+          key: JSC.integer()
         })
       ]
     );
@@ -125,13 +125,13 @@ describe('Map diff', function(){
       },
       [
         JSC.object({
-          a: JSC.integer(1, 100),
+          a: JSC.integer(),
           b: JSC.object({
-            c: JSC.integer(1, 100)
+            c: JSC.integer()
           })
         }),
         JSC.object({
-          d: JSC.integer(101, 200)
+          d: JSC.integer()
         })
       ]
     );
