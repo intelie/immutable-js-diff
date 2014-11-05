@@ -135,6 +135,33 @@ describe('Map diff', function(){
         })
       ]
     );
+
+    JSC.test(
+      'returns replace op when different value in nested structure',
+      function(veredict, obj, obj2){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).setIn(['b', 'c'], obj2.c);
+
+        var result = diff.diff(map1, map2);
+        var expected = {op: 'replace', path: '/b/c', value: obj2.c};
+
+        return veredict(
+          result.length !== 0 &&
+          result.every(function(op){ return opsAreEqual(op, expected); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.integer(1, 100)
+          })
+        }),
+        JSC.object({
+          c: JSC.integer(101, 200)
+        })
+      ]
+    );
   });
 });
 
