@@ -44,7 +44,7 @@ describe('Map diff', function(){
         var expected = {op: 'add', path: '/key2', value: obj2.key2};
 
         return veredict(
-          result.length !== 0 &&
+          result.length === 1 &&
           result.every(function(op){ return opsAreEqual(op, expected); })
         );
       },
@@ -68,7 +68,7 @@ describe('Map diff', function(){
         var expected = {op: 'replace', path: '/key', value: newValue};
 
         return veredict(
-          result.length !== 0 &&
+          result.length === 1 &&
           result.every(function(op){ return opsAreEqual(op, expected); })
         );
       },
@@ -90,7 +90,7 @@ describe('Map diff', function(){
         var expected = {op: 'remove', path: '/key'};
 
         return veredict(
-          result.length !== 0 &&
+          result.length === 1 &&
           result.every(function(op){ return opsAreEqual(op, expected); })
         );
       },
@@ -118,7 +118,7 @@ describe('Map diff', function(){
         var expected = {op: 'add', path: '/b/d', value: obj2.d};
 
         return veredict(
-          result.length !== 0 &&
+          result.length === 1 &&
           result.every(function(op){ return opsAreEqual(op, expected); })
         );
       },
@@ -145,7 +145,7 @@ describe('Map diff', function(){
         var expected = {op: 'replace', path: '/b/c', value: obj2.c};
 
         return veredict(
-          result.length !== 0 &&
+          result.length === 1 &&
           result.every(function(op){ return opsAreEqual(op, expected); })
         );
       },
@@ -172,7 +172,7 @@ describe('Map diff', function(){
         var expected = {op: 'remove', path: '/b/d'};
 
         return veredict(
-          result.length !== 0 &&
+          result.length === 1 &&
           result.every(function(op){ return opsAreEqual(op, expected); })
         );
       },
@@ -185,6 +185,63 @@ describe('Map diff', function(){
         }),
         JSC.object({
           d: JSC.integer()
+        })
+      ]
+    );
+
+    JSC.test(
+      'no replace in equal nested structure',
+      function(veredict, obj, obj2){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).set('a', obj2.a);
+
+        var result = diff(map1, map2);
+        var expected = {op: 'replace', path: '/a', value: obj2.a};
+
+        return veredict(
+          result.length === 1 &&
+          result.every(function(op){ return opsAreEqual(op, expected); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.integer()
+          })
+        }),
+        JSC.object({
+          a: JSC.integer()
+        })
+      ]
+    );
+
+    JSC.test(
+      'add/remove when different nested structure',
+      function(veredict, obj, obj2){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).set('b', Immutable.fromJS(obj2));
+
+        var result = diff(map1, map2);
+        var expected = [
+          {op: 'remove', path: '/b/c'},
+          {op: 'add', path: '/b/e', value: obj2.e},
+        ];
+
+        return veredict(
+          result.length === expected.length &&
+          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.integer()
+          })
+        }),
+        JSC.object({
+          e: JSC.integer()
         })
       ]
     );

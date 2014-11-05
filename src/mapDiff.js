@@ -22,12 +22,15 @@ var mapDiff = function(a, b, p){
   });
 
   b.forEach(function(bValue, bKey){
-    var aHasBKey = a.has(bKey);
-    if(!aHasBKey){
+    if(!a.has(bKey)){
       ops.push( op('add', addPath(path, bKey), bValue) );
     }
-    else if(aHasBKey && a.get(bKey) !== b.get(bKey) && !isMap(a.get(bKey))) {
-      ops.push( op('replace', addPath(path, bKey), bValue) );
+    else{
+      var aValue = a.get(bKey);
+      var areDifferentValues = (aValue !== bValue) && !isMap(aValue);
+      if(areDifferentValues) {
+        ops.push(op('replace', addPath(path, bKey), bValue));
+      }
     }
   });
 
