@@ -3,7 +3,6 @@
 var diff = require('../src/diff');
 var Immutable = require('Immutable');
 var JSC = require('jscheck');
-var assert = require('assert');
 
 describe('Map diff', function(){
   var failure = null;
@@ -25,7 +24,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.fromJS(obj);
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
 
         return veredict(result.length === 0);
       },
@@ -41,7 +40,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.fromJS(obj).set('key2', obj2.key2);
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
         var expected = {op: 'add', path: '/key2', value: obj2.key2};
 
         return veredict(
@@ -65,7 +64,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.fromJS(obj).set('key', newValue);
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
         var expected = {op: 'replace', path: '/key', value: newValue};
 
         return veredict(
@@ -87,7 +86,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.Map();
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
         var expected = {op: 'remove', path: '/key'};
 
         return veredict(
@@ -115,7 +114,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.fromJS(obj).setIn(['b', 'd'], obj2.d);
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
         var expected = {op: 'add', path: '/b/d', value: obj2.d};
 
         return veredict(
@@ -142,7 +141,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.fromJS(obj).setIn(['b', 'c'], obj2.c);
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
         var expected = {op: 'replace', path: '/b/c', value: obj2.c};
 
         return veredict(
@@ -169,7 +168,7 @@ describe('Map diff', function(){
         var map1 = Immutable.fromJS(obj).setIn(['b', 'd'], obj2.d);
         var map2 = Immutable.fromJS(obj);
 
-        var result = diff.diff(map1, map2);
+        var result = diff(map1, map2);
         var expected = {op: 'remove', path: '/b/d'};
 
         return veredict(
