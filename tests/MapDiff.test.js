@@ -3,6 +3,7 @@
 var diff = require('../src/diff');
 var Immutable = require('Immutable');
 var JSC = require('jscheck');
+var assert = require('assert');
 
 describe('Map diff', function(){
   var failure = null;
@@ -106,6 +107,16 @@ describe('Map diff', function(){
       console.error(failure);
       throw failure;
     }
+  });
+
+  it('check nested structures', function(){
+    var map1 = Immutable.fromJS({a: 1, b: {c: 2}});
+    var map2 = Immutable.fromJS({a: 1, b: {c: 2, d: 3}});
+
+    var result = diff.diff(map1, map2);
+    var expected = {op: 'add', path: '/b/d', value: 3};
+
+    assert.ok(result.every(function(op){ return opsAreEqual(op, expected); }));
   });
 });
 
