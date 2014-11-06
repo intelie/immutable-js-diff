@@ -36,14 +36,14 @@ describe('lcs', function() {
   it('computes diff', function () {
     var str1 = 'thisisatest';
     var str2 = 'testing123testing';
-    var expectedStr = 'tsitest';
 
     var list1 = Immutable.fromJS(str1.split(''));
     var list2 = Immutable.fromJS(str2.split(''));
-    var expected = expectedStr.split('');
+    var expected = [ '= t', '- h', '- i', '+ e', '= s', '+ t', '= i', '- s', '- a', '+ n','+ g',
+                     '+ 1', '+ 2', '+ 3', '= t','= e', '= s', '= t', '+ i','+ n','+ g' ];
 
     var result = lcs.diff(list1, list2);
 
-    console.log(result);
-  })
+    assert.deepEqual(result, expected);
+  });
 });

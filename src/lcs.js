@@ -39,24 +39,22 @@ var lcs = function(xs, ys){
 var diff = function(xs, ys){
   var matrix = computeLcsMatrix(xs, ys);
 
-  var result = [];
-  for(var i = xs.size, j = ys.size; i !== 0 && j !== 0;){
-    if(i > 0 && j > 0 && Immutable.is(xs.get(i-1), ys.get(j-1))){
-      result.push('= ' + xs.get(i-1));
-      i--;
-      j--;
+  return printDiff(matrix, xs, ys, xs.size, ys.size);
+};
+
+var printDiff = function(matrix, xs, ys, i, j) {
+  if(i === 0 && j === 0) { return []; }
+  if (i > 0 && j > 0 && Immutable.is(xs.get(i-1), ys.get(j-1))) {
+    return printDiff(matrix, xs, ys, i - 1, j - 1).concat("= " + xs.get(i - 1));
+  }
+  else {
+    if (j > 0 && (i === 0 || matrix[i][j - 1] >= matrix[i - 1][j])) {
+      return printDiff(matrix, xs, ys, i, j - 1).concat("+ " + ys.get(j - 1));
     }
-    else if(j > 0 && (i === 0 || matrix[i][j-1] >= matrix[i-1][j])){
-      result.push('+ ' + ys.get(j-1));
-      j--;
-    }
-    else if(i > 0 && (j === 0 || matrix[i][j-1] < matrix[i-1][j])){
-      result.push('- ' + xs.get(i-1));
-      j--;
+    else if (i > 0 && (j === 0 || matrix[i][j - 1] < matrix[i - 1][j])) {
+      return printDiff(matrix, xs, ys, i - 1, j).concat("- " + xs.get(i - 1));
     }
   }
-
-  return result;
 };
 
 function computeLcsMatrix(xs, ys) {
