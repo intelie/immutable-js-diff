@@ -36,6 +36,8 @@ var lcs = function(xs, ys){
   return backtrackLcs(xs, ys, matrix);
 };
 
+var DiffResult = Immutable.Record({op: '=', val: null})
+
 var diff = function(xs, ys){
   var matrix = computeLcsMatrix(xs, ys);
 
@@ -45,14 +47,23 @@ var diff = function(xs, ys){
 var printDiff = function(matrix, xs, ys, i, j) {
   if(i === 0 && j === 0) { return []; }
   if (i > 0 && j > 0 && Immutable.is(xs.get(i-1), ys.get(j-1))) {
-    return printDiff(matrix, xs, ys, i - 1, j - 1).concat("= " + xs.get(i - 1));
+    return printDiff(matrix, xs, ys, i - 1, j - 1).concat(new DiffResult({
+      op: '=',
+      val: xs.get(i - 1)
+    }));
   }
   else {
     if (j > 0 && (i === 0 || matrix[i][j - 1] >= matrix[i - 1][j])) {
-      return printDiff(matrix, xs, ys, i, j - 1).concat("+ " + ys.get(j - 1));
+      return printDiff(matrix, xs, ys, i, j - 1).concat(new DiffResult({
+        op: '+',
+        val: ys.get(j - 1)
+      }));
     }
     else if (i > 0 && (j === 0 || matrix[i][j - 1] < matrix[i - 1][j])) {
-      return printDiff(matrix, xs, ys, i - 1, j).concat("- " + xs.get(i - 1));
+      return printDiff(matrix, xs, ys, i - 1, j).concat(new DiffResult({
+        op: '-',
+        val: xs.get(i - 1)
+      }));
     }
   }
 };

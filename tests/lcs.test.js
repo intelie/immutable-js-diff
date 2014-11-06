@@ -34,16 +34,25 @@ describe('lcs', function() {
   });
 
   it('computes diff', function () {
-    var str1 = 'thisisatest';
-    var str2 = 'testing123testing';
+    var array1 = [1, 2, 3, 4];
+    var array2 = [1, 2, 3, 5, 6, 7];
 
-    var list1 = Immutable.fromJS(str1.split(''));
-    var list2 = Immutable.fromJS(str2.split(''));
-    var expected = [ '= t', '- h', '- i', '+ e', '= s', '+ t', '= i', '- s', '- a', '+ n','+ g',
-                     '+ 1', '+ 2', '+ 3', '= t','= e', '= s', '= t', '+ i','+ n','+ g' ];
+    var list1 = Immutable.fromJS(array1);
+    var list2 = Immutable.fromJS(array2);
+    var expected = [
+      {op: '=', val: 1},
+      {op: '=', val: 2},
+      {op: '=', val: 3},
+      {op: '-', val: 4},
+      {op: '+', val: 5},
+      {op: '+', val: 6},
+      {op: '+', val: 7}
+    ];
 
     var result = lcs.diff(list1, list2);
 
-    assert.deepEqual(result, expected);
+    assert.ok(result.every(function(r, i){
+      return r.op === expected[i].op && r.val === expected[i].val;
+    }));
   });
 });
