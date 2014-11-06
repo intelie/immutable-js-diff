@@ -32,4 +32,18 @@ describe('lcs', function() {
 
     assert.deepEqual(result, expected);
   });
+
+  it('computes diff', function () {
+    var str1 = 'thisisatest';
+    var str2 = 'testing123testing';
+    var expectedStr = 'tsitest';
+
+    var list1 = Immutable.fromJS(str1.split(''));
+    var list2 = Immutable.fromJS(str2.split(''));
+    var expected = expectedStr.split('');
+
+    var result = lcs.diff(list1, list2);
+
+    console.log(result);
+  })
 });

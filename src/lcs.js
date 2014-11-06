@@ -25,15 +25,39 @@ var makeMatrix = function(n, m, x){
 };
 
 /**
- * Returns longest of two arrays
- * @param xs array 1
- * @param ys array 2
- * @returns {Array} longest of two arrays
+ * Computes Longest Common Subsequence between two Immutable.JS Indexed Iterables
+ * Based on Dynamic Programming http://rosettacode.org/wiki/Longest_common_subsequence#Java
+ * @param xs ImmutableJS Indexed Sequence 1
+ * @param ys ImmutableJS Indexed Sequence 2
  */
-var longest = function(xs, ys){
-  return xs.size > ys.size ? xs : ys;
+var lcs = function(xs, ys){
+  var matrix = computeLcsMatrix(xs, ys);
+
+  return backtrackLcs(xs, ys, matrix);
 };
 
+var diff = function(xs, ys){
+  var matrix = computeLcsMatrix(xs, ys);
+
+  var result = [];
+  for(var i = xs.size, j = ys.size; i !== 0 && j !== 0;){
+    if(i > 0 && j > 0 && Immutable.is(xs.get(i-1), ys.get(j-1))){
+      result.push('= ' + xs.get(i-1));
+      i--;
+      j--;
+    }
+    else if(j > 0 && (i === 0 || matrix[i][j-1] >= matrix[i-1][j])){
+      result.push('+ ' + ys.get(j-1));
+      j--;
+    }
+    else if(i > 0 && (j === 0 || matrix[i][j-1] < matrix[i-1][j])){
+      result.push('- ' + xs.get(i-1));
+      j--;
+    }
+  }
+
+  return result;
+};
 
 function computeLcsMatrix(xs, ys) {
   var n = xs.size;
@@ -70,19 +94,8 @@ var backtrackLcs = function(xs, ys, matrix){
   return lcs.reverse();
 };
 
-/**
- * Computes Longest Common Subsequence between two Immutable.JS Indexed Iterables
- * Based on Dynamic Programming http://rosettacode.org/wiki/Longest_common_subsequence#Java
- * @param xs ImmutableJS Indexed Sequence 1
- * @param ys ImmutableJS Indexed Sequence 2
- */
-var lcs = function(xs, ys){
-  var matrix = computeLcsMatrix(xs, ys);
-
-  return backtrackLcs(xs, ys, matrix);
-};
-
 module.exports = {
   lcs: lcs,
-  computeLcsMatrix: computeLcsMatrix
+  computeLcsMatrix: computeLcsMatrix,
+  diff: diff
 };
