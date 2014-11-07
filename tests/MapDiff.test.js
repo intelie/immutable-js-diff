@@ -3,6 +3,7 @@
 var diff = require('../src/diff');
 var Immutable = require('Immutable');
 var JSC = require('jscheck');
+var opsAreEqual = require('./opsAreEqual');
 
 describe('Map diff', function(){
   var failure = null;
@@ -247,9 +248,3 @@ describe('Map diff', function(){
     );
   });
 });
-
-var opsAreEqual = function(value, expected){
-  return value.op === expected.op &&
-      value.path === expected.path &&
-      value.value === expected.value;
-};
