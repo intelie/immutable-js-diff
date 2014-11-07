@@ -36,8 +36,14 @@ var lcs = function(xs, ys){
   return backtrackLcs(xs, ys, matrix);
 };
 
-var DiffResult = Immutable.Record({op: '=', val: null})
+var DiffResult = Immutable.Record({op: '=', val: null});
 
+/**
+ * Returns the resulting diff operations of LCS between two sequences
+ * @param xs Indexed Sequence 1
+ * @param ys Indexed Sequence 2
+ * @returns Array of DiffResult {op:'=' | '+' | '-', val:any}
+ */
 var diff = function(xs, ys){
   var matrix = computeLcsMatrix(xs, ys);
 
@@ -68,6 +74,11 @@ var printDiff = function(matrix, xs, ys, i, j) {
   }
 };
 
+/**
+ * Computes the Longest Common Subsequence table
+ * @param xs Indexed Sequence 1
+ * @param ys Indexed Sequence 2
+ */
 function computeLcsMatrix(xs, ys) {
   var n = xs.size;
   var m = ys.size;
@@ -87,6 +98,13 @@ function computeLcsMatrix(xs, ys) {
   return a;
 }
 
+/**
+ * Extracts a LCS from matrix M
+ * @param xs Indexed Sequence 1
+ * @param ys Indexed Sequence 2
+ * @param matrix LCS Matrix
+ * @returns {Array.<T>} Longest Common Subsequence
+ */
 var backtrackLcs = function(xs, ys, matrix){
   var lcs = [];
   for(var i = xs.size, j = ys.size; i !== 0 && j !== 0;){
