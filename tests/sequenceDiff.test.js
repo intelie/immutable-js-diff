@@ -19,6 +19,13 @@ describe('Sequence diff', function() {
     });
   });
 
+  afterEach(function () {
+    if(failure){
+      console.error(failure);
+      throw failure;
+    }
+  });
+
   it('check properties', function () {
     JSC.test(
       'returns [] when equal',
@@ -68,7 +75,7 @@ describe('Sequence diff', function() {
 
   it('JSCheck', function () {
     JSC.test(
-      'returns add',
+      'returns add when value is inserted in the middle of sequence',
       function(veredict, array, addIdx, newValue){
         var list1 = Immutable.fromJS(array);
         var list2 = Immutable.fromJS(array);
@@ -93,7 +100,7 @@ describe('Sequence diff', function() {
       function(veredict, array, removeIdx, newValue){
         var list1 = Immutable.fromJS(array);
         var list2 = Immutable.fromJS(array);
-        var modifiedList = list2.splice(removeIdx, 1)
+        var modifiedList = list2.splice(removeIdx, 1);
 
         var result = diff(list1, modifiedList);
         var expected = [
@@ -104,7 +111,7 @@ describe('Sequence diff', function() {
       },
       [
         JSC.array(10, JSC.integer()),
-        JSC.integer(0, 9),
+        JSC.integer(0, 9)
       ]
     );
 

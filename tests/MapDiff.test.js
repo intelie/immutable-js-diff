@@ -18,6 +18,13 @@ describe('Map diff', function(){
     });
   });
 
+  afterEach(function () {
+    if(failure){
+      console.error(failure);
+      throw failure;
+    }
+  });
+
   it('check properties', function(){
     JSC.test(
       'returns [] when equal',
@@ -101,11 +108,6 @@ describe('Map diff', function(){
         })
       ]
     );
-
-    if(failure){
-      console.error(failure);
-      throw failure;
-    }
   });
 
   it('check nested structures', function(){
@@ -244,6 +246,97 @@ describe('Map diff', function(){
         JSC.object({
           e: JSC.integer()
         })
+      ]
+    );
+  });
+
+  it('check nested indexed sequences', function () {
+    JSC.test(
+      'add when value added in nested sequence',
+      function(veredict, obj, newInt){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).updateIn(['b', 'c'], function(list){
+          return list.push(newInt);
+        });
+
+        var result = diff(map1, map2);
+        var expected = [
+          {op: 'add', path: '/b/c/5', value: newInt},
+        ];
+
+        return veredict(
+          result.length === expected.length &&
+          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.array(5, JSC.integer())
+          })
+        }),
+        JSC.integer()
+      ]
+    );
+
+    JSC.test(
+      'remove when value removed in nested sequence',
+      function(veredict, obj, removeIdx){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).updateIn(['b', 'c'], function(list){
+          return list.splice(removeIdx, 1);
+        });
+
+        var result = diff(map1, map2);
+        var expected = [
+          {op: 'remove', path: '/b/c/'+removeIdx}
+        ];
+
+        return veredict(
+          result.length === expected.length &&
+          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.array(10, JSC.integer())
+          })
+        }),
+        JSC.integer(0, 9)
+      ]
+    );
+
+    JSC.test(
+      'add/remove when values are added and removed in nested sequence',
+      function(veredict, obj, removeIdx, newValue){
+        var map1 = Immutable.fromJS(obj);
+        var map2 = Immutable.fromJS(obj).updateIn(['b', 'c'], function(list){
+          return list.splice(removeIdx, 1).push(newValue);
+        });
+
+        var result = diff(map1, map2);
+        var expected = [
+          {op: 'remove', path: '/b/c/'+removeIdx},
+          {op: 'add', path: '/b/c/9', value: newValue}
+        ];
+
+        return veredict(
+          result.length === expected.length &&
+          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
+        );
+      },
+      [
+        JSC.object({
+          a: JSC.integer(),
+          b: JSC.object({
+            c: JSC.array(10, JSC.integer())
+          })
+        }),
+        JSC.integer(0, 9),
+        JSC.integer()
       ]
     );
   });
