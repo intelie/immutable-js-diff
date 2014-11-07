@@ -3,6 +3,8 @@
 var diff = require('../src/diff');
 var Immutable = require('Immutable');
 var JSC = require('jscheck');
+var assert = require('assert');
+var opsAreEqual = require('./opsAreEqual');
 
 describe('Sequence diff', function() {
   var failure = null;
@@ -32,5 +34,15 @@ describe('Sequence diff', function() {
         JSC.array(5, JSC.integer())
       ]
     );
+  });
+
+  it('returns add operations', function () {
+    var list1 = Immutable.fromJS([1,2,3,4]);
+    var list2 = Immutable.fromJS([1,2,3,4,5]);
+
+    var result = diff(list1, list2);
+    var expected = [{op: 'add', path: '/4', value: 5}];
+
+    assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
   });
 });
