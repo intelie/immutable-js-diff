@@ -36,12 +36,32 @@ describe('Sequence diff', function() {
     );
   });
 
-  it('returns add operations', function () {
+  it('returns add operation', function () {
     var list1 = Immutable.fromJS([1,2,3,4]);
     var list2 = Immutable.fromJS([1,2,3,4,5]);
 
     var result = diff(list1, list2);
     var expected = [{op: 'add', path: '/4', value: 5}];
+
+    assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
+  });
+
+  it('returns remove operation', function () {
+    var list1 = Immutable.fromJS([1,2,3,4]);
+    var list2 = Immutable.fromJS([1,2,4]);
+
+    var result = diff(list1, list2);
+    var expected = [{op: 'remove', path: '/2'}];
+
+    assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
+  });
+
+  it('returns add/remove operations', function () {
+    var list1 = Immutable.fromJS([1,2,3,4]);
+    var list2 = Immutable.fromJS([1,2,4,5]);
+
+    var result = diff(list1, list2);
+    var expected = [{op: 'remove', path: '/2'}, {op: 'add', path: '/3', value: 5}];
 
     assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
   });
