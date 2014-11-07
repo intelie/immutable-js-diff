@@ -21,7 +21,7 @@
     "gulp-mocha": "^1.1.1",
     "gulp-util": "^3.0.1",
     "jscheck": "^0.2.0",
-    "json-diff": "brenoferreira/json-diff"
+    "jsondiff": "brenoferreira/json-diff"
   },
   "dependencies": {
     "immutable": "^3.0.2"
