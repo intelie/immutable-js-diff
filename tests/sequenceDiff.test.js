@@ -65,4 +65,69 @@ describe('Sequence diff', function() {
 
     assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
   });
+
+  it('JSCheck', function () {
+    JSC.test(
+      'returns add',
+      function(veredict, array, addIdx, newValue){
+        var list1 = Immutable.fromJS(array);
+        var list2 = Immutable.fromJS(array);
+        var modifiedList = list2.splice(addIdx, 0, newValue);
+
+        var result = diff(list1, modifiedList);
+        var expected = [
+          {op: 'add', path: '/'+addIdx, value: newValue}
+        ];
+
+        return veredict(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
+      },
+      [
+        JSC.array(10, JSC.integer()),
+        JSC.integer(0, 9),
+        JSC.integer()
+      ]
+    );
+
+    JSC.test(
+      'returns remove',
+      function(veredict, array, removeIdx, newValue){
+        var list1 = Immutable.fromJS(array);
+        var list2 = Immutable.fromJS(array);
+        var modifiedList = list2.splice(removeIdx, 1)
+
+        var result = diff(list1, modifiedList);
+        var expected = [
+          {op: 'remove', path: '/'+removeIdx}
+        ];
+
+        return veredict(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
+      },
+      [
+        JSC.array(10, JSC.integer()),
+        JSC.integer(0, 9),
+      ]
+    );
+
+    JSC.test(
+      'returns add/remove operations',
+      function(veredict, array, removeIdx, newValue){
+        var list1 = Immutable.fromJS(array);
+        var list2 = Immutable.fromJS(array);
+        var modifiedList = list2.splice(removeIdx, 1).push(newValue);
+
+        var result = diff(list1, modifiedList);
+        var expected = [
+          {op: 'remove', path: '/'+removeIdx},
+          {op: 'add', path: '/9', value: newValue}
+        ];
+
+        return veredict(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
+      },
+      [
+        JSC.array(10, JSC.integer()),
+        JSC.integer(0, 9),
+        JSC.integer()
+      ]
+    );
+  });
 });
