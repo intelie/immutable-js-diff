@@ -30,5 +30,27 @@ describe('Comparison Tests', function() {
     compareDiffs({a: 'a'}, {});
     compareDiffs([[1]], []);
     compareDiffs([], [1]);
+
+    compareDiffs([], [[1]]);
+
+    compareDiffs([2, 3], [1, 2, 3]);
+    compareDiffs([1, 3], [1, 2, 3]);
+    compareDiffs([1, 2], [1, 2, 3]);
+    //compareDiffs([1, 2, 3], [1, 4, 3]); //TODO: fix replace in sequence diff
+
+    compareDiffs({a: [9, 8, 7], b: 2, c: 3}, {a: [9, 7], b: 2, c: 4, d: 5});
+
+    //compareDiffs([1, 0, 0], [1, 1, 0]); //TODO: fix replace in sequence diff
+    //compareDiffs([1, 1, 0], [1, 0, 0]); //TODO: fix replace in sequence diff
+
+    compareDiffs({foo: 'bar'}, {baz: 'qux', foo: 'bar'});
+    compareDiffs({foo: ['bar', 'baz']}, {foo: ['bar', 'qux', 'baz']});
+    compareDiffs({baz: 'qux', foo: 'bar'}, {foo: 'bar'});
+    compareDiffs({foo: ['bar', 'qux', 'baz']}, {foo: ['bar', 'baz']});
+    compareDiffs({baz: 'qux', foo: 'bar'}, {baz: 'boo', foo: 'bar'});
+    compareDiffs({foo: 'bar'}, {foo: 'bar', child: {grandchild: {}}});
+    compareDiffs({foo: ['bar']}, {foo: ['bar', ['abc', 'def']]});
+
+    //compareDiffs([0, 0], [1, 1]); //TODO: fix replace in sequence diff
   });
 });
