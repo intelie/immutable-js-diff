@@ -310,17 +310,16 @@ describe('Map diff', function(){
     );
 
     JSC.test(
-      'add/remove when values are added and removed in nested sequence',
-      function(veredict, obj, removeIdx, newValue){
+      'replace when values are replaced in nested sequence',
+      function(veredict, obj, replaceIdx, newValue){
         var map1 = Immutable.fromJS(obj);
         var map2 = Immutable.fromJS(obj).updateIn(['b', 'c'], function(list){
-          return list.splice(removeIdx, 1).push(newValue);
+          return list.set(replaceIdx, newValue);
         });
 
         var result = diff(map1, map2);
         var expected = [
-          {op: 'remove', path: '/b/c/'+removeIdx},
-          {op: 'add', path: '/b/c/9', value: newValue}
+          {op: 'replace', path: '/b/c/'+replaceIdx, value: newValue}
         ];
 
         return veredict(

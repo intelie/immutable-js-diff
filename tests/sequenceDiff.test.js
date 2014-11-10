@@ -118,16 +118,15 @@ describe('Sequence diff', function() {
     );
 
     JSC.test(
-      'returns add/remove operations',
-      function(veredict, array, removeIdx, newValue){
+      'returns replace operations',
+      function(veredict, array, replaceIdx, newValue){
         var list1 = Immutable.fromJS(array);
         var list2 = Immutable.fromJS(array);
-        var modifiedList = list2.splice(removeIdx, 1).push(newValue);
+        var modifiedList = list2.set(replaceIdx, newValue);
 
         var result = diff(list1, modifiedList);
         var expected = [
-          {op: 'remove', path: '/'+removeIdx},
-          {op: 'add', path: '/9', value: newValue}
+          {op: 'replace', path: '/'+replaceIdx, value: newValue}
         ];
 
         return veredict(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
