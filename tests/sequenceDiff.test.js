@@ -68,7 +68,9 @@ describe('Sequence diff', function() {
     var list2 = Immutable.fromJS([1,2,4,5]);
 
     var result = diff(list1, list2);
-    var expected = [{op: 'remove', path: '/2'}, {op: 'add', path: '/3', value: 5}];
+    var expected = [
+      {op: 'replace', path: '/2', value: 4},
+      {op: 'replace', path: '/3', value: 5}];
 
     assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
   });
