@@ -43,8 +43,7 @@ describe('lcs', function() {
       {op: '=', val: 1},
       {op: '=', val: 2},
       {op: '=', val: 3},
-      {op: '-', val: 4},
-      {op: '+', val: 5},
+      {op: '!=', val: 5},
       {op: '+', val: 6},
       {op: '+', val: 7}
     ];
