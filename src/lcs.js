@@ -58,6 +58,12 @@ var printDiff = function(matrix, xs, ys, i, j) {
       val: xs.get(i - 1)
     }));
   }
+  else if (i > 0 && j > 0 && i === j && !Immutable.is(xs.get(i-1), ys.get(j-1))) {
+    return printDiff(matrix, xs, ys, i - 1, j - 1).concat(new DiffResult({
+      op: '!=',
+      val: ys.get(i - 1)
+    }));
+  }
   else {
     if (j > 0 && (i === 0 || matrix[i][j - 1] >= matrix[i - 1][j])) {
       return printDiff(matrix, xs, ys, i, j - 1).concat(new DiffResult({

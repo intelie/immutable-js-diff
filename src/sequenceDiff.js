@@ -17,6 +17,10 @@ var sequenceDiff = function (a, b, p) {
   var result = [];
   lcsDiff.forEach(function (diff, i) {
     if(diff.op === '='){ pathIndex++; }
+    else if(diff.op === '!='){
+      result.push(op('replace', appendPath(path, pathIndex), diff.val));
+      pathIndex++;
+    }
     else if(diff.op === '+'){
       result.push(op('add', appendPath(path, pathIndex), diff.val));
       pathIndex++;
