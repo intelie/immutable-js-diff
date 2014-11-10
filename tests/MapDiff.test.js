@@ -3,6 +3,7 @@
 var diff = require('../src/diff');
 var Immutable = require('Immutable');
 var JSC = require('jscheck');
+var assert = require('assert');
 var opsAreEqual = require('./opsAreEqual');
 
 describe('Map diff', function(){
@@ -338,5 +339,18 @@ describe('Map diff', function(){
         JSC.integer()
       ]
     );
+  });
+
+  it('check map in indexed sequence', function(){
+    var array1 = [{a: 1}, {a: 2}, {a: 3}];
+    var array2 = [{a: 1}, {a: 2, b:2.5}, {a: 3}];
+
+    var list1 = Immutable.fromJS(array1);
+    var list2 = Immutable.fromJS(array2);
+
+    var result = diff(list1, list2);
+    var expected = [{op: 'add', path: '/1/b', value: 2.5}];
+
+    assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
   });
 });

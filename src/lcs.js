@@ -37,6 +37,7 @@ var lcs = function(xs, ys){
 };
 
 var DiffResult = Immutable.Record({op: '=', val: null});
+var ReplaceResult = Immutable.Record({op: '!=', val: null, newVal: null});
 
 /**
  * Returns the resulting diff operations of LCS between two sequences
@@ -59,9 +60,9 @@ var printDiff = function(matrix, xs, ys, i, j) {
     }));
   }
   else if (i > 0 && j > 0 && i === j && !Immutable.is(xs.get(i-1), ys.get(j-1))) {
-    return printDiff(matrix, xs, ys, i - 1, j - 1).concat(new DiffResult({
-      op: '!=',
-      val: ys.get(i - 1)
+    return printDiff(matrix, xs, ys, i - 1, j - 1).concat(new ReplaceResult({
+      val: xs.get(i - 1),
+      newVal: ys.get(i - 1)
     }));
   }
   else {
