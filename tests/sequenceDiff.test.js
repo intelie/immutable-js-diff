@@ -99,7 +99,7 @@ describe('Sequence diff', function() {
 
     JSC.test(
       'returns remove',
-      function(veredict, array, removeIdx, newValue){
+      function(veredict, array, removeIdx){
         var list1 = Immutable.fromJS(array);
         var list2 = Immutable.fromJS(array);
         var modifiedList = list2.splice(removeIdx, 1);
@@ -114,6 +114,24 @@ describe('Sequence diff', function() {
       [
         JSC.array(10, JSC.integer()),
         JSC.integer(0, 9)
+      ]
+    );
+
+    JSC.test(
+      'returns sequential removes',
+      function(veredict, array, nRemoves){
+        var list1 = Immutable.fromJS(array);
+        var list2 = Immutable.fromJS(array);
+        var modifiedList = list2.skip(nRemoves);
+
+        var result = diff(list1, modifiedList);
+        var expected = Immutable.Repeat(Immutable.Map({op: 'remove', path: '/0'}), nRemoves);
+
+        return veredict(Immutable.is(result, expected));
+      },
+      [
+        JSC.array(10, JSC.integer()),
+        JSC.integer(1, 5)
       ]
     );
 
