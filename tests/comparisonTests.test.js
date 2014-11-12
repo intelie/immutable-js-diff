@@ -4,15 +4,12 @@ var Immutable = require('Immutable');
 var assert = require('assert');
 var diff = require('../src/diff');
 var jsonDiff = require('jsondiff');
-var opsAreEqual = require('./opsAreEqual');
 
 var compareDiffs = function(a, b){
-  var jsonDiffResult = jsonDiff.diff(a, b);
+  var jsonDiffResult = Immutable.fromJS(jsonDiff.diff(a, b));
   var immutableDiffResult = diff(Immutable.fromJS(a), Immutable.fromJS(b));
 
-  assert.ok(jsonDiffResult.every(function(r, i){
-    return opsAreEqual(r, immutableDiffResult[i]);
-  }));
+  assert.ok(Immutable.is(jsonDiffResult, immutableDiffResult));
 };
 
 describe('Comparison Tests', function() {
@@ -41,7 +38,7 @@ describe('Comparison Tests', function() {
     compareDiffs({a: [9, 8, 7], b: 2, c: 3}, {a: [9, 7], b: 2, c: 4, d: 5});
 
     compareDiffs([1, 0, 0], [1, 1, 0]); 
-    compareDiffs([1, 1, 0], [1, 0, 0]); 
+    compareDiffs([1, 1, 0], [1, 0, 0]);
 
     compareDiffs({foo: 'bar'}, {baz: 'qux', foo: 'bar'});
     compareDiffs({foo: ['bar', 'baz']}, {foo: ['bar', 'qux', 'baz']});

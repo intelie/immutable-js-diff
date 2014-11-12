@@ -1,6 +1,5 @@
 'use strict';
 
-
 var Immutable = require('immutable');
 var utils = require('./utils');
 var lcs = require('./lcs');
@@ -74,7 +73,9 @@ var sequenceDiff = function (a, b, p) {
 };
 
 module.exports = function(a, b){
-  if(isIndexed(a) && isIndexed(b)){ return sequenceDiff(a, b); }
+  if(isIndexed(a) && isIndexed(b)){
+    return Immutable.fromJS(sequenceDiff(a, b));
+  }
 
-  return mapDiff(a, b);
+  return Immutable.fromJS(mapDiff(a, b));
 };

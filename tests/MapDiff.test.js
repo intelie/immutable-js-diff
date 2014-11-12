@@ -4,7 +4,6 @@ var diff = require('../src/diff');
 var Immutable = require('Immutable');
 var JSC = require('jscheck');
 var assert = require('assert');
-var opsAreEqual = require('./opsAreEqual');
 
 describe('Map diff', function(){
   var failure = null;
@@ -35,7 +34,7 @@ describe('Map diff', function(){
 
         var result = diff(map1, map2);
 
-        return veredict(result.length === 0);
+        return veredict(result.count() === 0);
       },
       [
         JSC.object(5)
@@ -50,12 +49,9 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj).set('key2', obj2.key2);
 
         var result = diff(map1, map2);
-        var expected = {op: 'add', path: '/key2', value: obj2.key2};
+        var expected = Immutable.fromJS([{op: 'add', path: '/key2', value: obj2.key2}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -74,12 +70,9 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj).set('key', newValue);
 
         var result = diff(map1, map2);
-        var expected = {op: 'replace', path: '/key', value: newValue};
+        var expected = Immutable.fromJS([{op: 'replace', path: '/key', value: newValue}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -96,12 +89,9 @@ describe('Map diff', function(){
         var map2 = Immutable.Map();
 
         var result = diff(map1, map2);
-        var expected = {op: 'remove', path: '/key'};
+        var expected = Immutable.fromJS([{op: 'remove', path: '/key'}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -119,12 +109,9 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj).setIn(['b', 'd'], obj2.d);
 
         var result = diff(map1, map2);
-        var expected = {op: 'add', path: '/b/d', value: obj2.d};
+        var expected = Immutable.fromJS([{op: 'add', path: '/b/d', value: obj2.d}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -146,12 +133,9 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj).setIn(['b', 'c'], obj2.c);
 
         var result = diff(map1, map2);
-        var expected = {op: 'replace', path: '/b/c', value: obj2.c};
+        var expected = Immutable.fromJS([{op: 'replace', path: '/b/c', value: obj2.c}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -173,12 +157,9 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj);
 
         var result = diff(map1, map2);
-        var expected = {op: 'remove', path: '/b/d'};
+        var expected = Immutable.fromJS([{op: 'remove', path: '/b/d'}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -200,12 +181,9 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj).set('a', obj2.a);
 
         var result = diff(map1, map2);
-        var expected = {op: 'replace', path: '/a', value: obj2.a};
+        var expected = Immutable.fromJS([{op: 'replace', path: '/a', value: obj2.a}]);
 
-        return veredict(
-          result.length === 1 &&
-          result.every(function(op){ return opsAreEqual(op, expected); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -227,15 +205,12 @@ describe('Map diff', function(){
         var map2 = Immutable.fromJS(obj).set('b', Immutable.fromJS(obj2));
 
         var result = diff(map1, map2);
-        var expected = [
+        var expected = Immutable.fromJS([
           {op: 'remove', path: '/b/c'},
           {op: 'add', path: '/b/e', value: obj2.e},
-        ];
+        ]);
 
-        return veredict(
-          result.length === expected.length &&
-          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -261,14 +236,9 @@ describe('Map diff', function(){
         });
 
         var result = diff(map1, map2);
-        var expected = [
-          {op: 'add', path: '/b/c/5', value: newInt},
-        ];
+        var expected = Immutable.fromJS([{op: 'add', path: '/b/c/5', value: newInt}]);
 
-        return veredict(
-          result.length === expected.length &&
-          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -290,14 +260,9 @@ describe('Map diff', function(){
         });
 
         var result = diff(map1, map2);
-        var expected = [
-          {op: 'remove', path: '/b/c/'+removeIdx}
-        ];
+        var expected = Immutable.fromJS([{op: 'remove', path: '/b/c/'+removeIdx}]);
 
-        return veredict(
-          result.length === expected.length &&
-          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -319,14 +284,11 @@ describe('Map diff', function(){
         });
 
         var result = diff(map1, map2);
-        var expected = [
+        var expected = Immutable.fromJS([
           {op: 'replace', path: '/b/c/'+replaceIdx, value: newValue}
-        ];
+        ]);
 
-        return veredict(
-          result.length === expected.length &&
-          result.every(function(op, i){ return opsAreEqual(op, expected[i]); })
-        );
+        return veredict(Immutable.is(result, expected));
       },
       [
         JSC.object({
@@ -349,8 +311,8 @@ describe('Map diff', function(){
     var list2 = Immutable.fromJS(array2);
 
     var result = diff(list1, list2);
-    var expected = [{op: 'add', path: '/1/b', value: 2.5}];
+    var expected = Immutable.fromJS([{op: 'add', path: '/1/b', value: 2.5}]);
 
-    assert.ok(result.every(function(op, i){ return opsAreEqual(op, expected[i]); }));
+    assert.ok(Immutable.is(result, expected));
   });
 });
