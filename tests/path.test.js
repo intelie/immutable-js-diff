@@ -37,4 +37,14 @@ describe('Path', function() {
 
     assert.strictEqual(result, str);
   });
+
+  it('concatenates path', function() {
+    var p = '/path';
+    var pathToAdd = 'addedPath';
+
+    var result = path.concat(p, pathToAdd);
+    var expected = '/path/addedPath';
+
+    assert.strictEqual(result, expected);
+  });
 });
