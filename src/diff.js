@@ -51,7 +51,7 @@ var sequenceDiff = function (a, b, p) {
 
   var pathIndex = 0;
 
-  lcsDiff.forEach(function (diff, i) {
+  lcsDiff.forEach(function (diff) {
     if(diff.op === '='){ pathIndex++; }
     else if(diff.op === '!='){
       if(isMap(diff.val) && isMap(diff.newVal)){
