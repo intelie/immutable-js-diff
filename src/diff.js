@@ -12,7 +12,7 @@ var mapDiff = function(a, b, p){
   var ops = [];
   var path = p || '';
 
-  if(Immutable.is(a, b)){ return ops; }
+  if(Immutable.is(a, b) || (a == b == null)){ return ops; }
 
   a.forEach(function(aValue, aKey){
     if(!b.has(aKey)){

@@ -25,6 +25,12 @@ describe('Map diff', function(){
     }
   });
 
+  it('returns empty diff when both values are null', function() {
+    var result = diff(null, null);
+
+    assert.ok(result.count() === 0);
+  });
+
   it('check properties', function(){
     JSC.test(
       'returns [] when equal',
