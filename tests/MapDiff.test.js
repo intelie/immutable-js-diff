@@ -322,23 +322,45 @@ describe('Map diff', function(){
     assert.ok(Immutable.is(result, expected));
   });
 
-  it('replaces null for immutable value', function() {
-    var map1 = null;
-    var map2 = Immutable.fromJS({a: 1});
+  describe('handling nulls', function() {
+    it('replaces null for immutable value', function() {
+      var map1 = null;
+      var map2 = Immutable.fromJS({a: 1});
 
-    var result = diff(map1, map2);
-    var expected = Immutable.fromJS([{op: 'replace', path: '/', value: map2}]);
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([{op: 'replace', path: '/', value: map2}]);
 
-    assert.ok(Immutable.is(result, expected));
-  });
+      assert.ok(Immutable.is(result, expected));
+    });
 
-  it('replaces value for null', function() {
-    var map1 = Immutable.fromJS({a: 1});
-    var map2 = null;
+    it('replaces value for null', function() {
+      var map1 = Immutable.fromJS({a: 1});
+      var map2 = null;
 
-    var result = diff(map1, map2);
-    var expected = Immutable.fromJS([{op: 'replace', path: '/', value: map2}]);
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([{op: 'replace', path: '/', value: map2}]);
 
-    assert.ok(Immutable.is(result, expected));
+      assert.ok(Immutable.is(result, expected));
+    });
+
+    it('replaces null value in map', function() {
+      var map1 = Immutable.fromJS({a: null});
+      var map2 = Immutable.fromJS({a: 1});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([{op: 'replace', path: '/a', value: 1}]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
+
+    it('replaces null value in map for empty map', function() {
+      var map1 = Immutable.fromJS({a: null});
+      var map2 = Immutable.fromJS({});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([{op: 'remove', path: '/a'}]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
   });
 });
