@@ -43,36 +43,38 @@ var mapDiff = function(a, b, p){
 };
 
 var sequenceDiff = function (a, b, p) {
+  var ops = [];
   var path = p || '';
-  if(Immutable.is(a, b)){ return []; }
+  if(Immutable.is(a, b) || (a == b == null)){ return ops; }
 
   var lcsDiff = lcs.diff(a, b);
 
   var pathIndex = 0;
-  var result = [];
+
   lcsDiff.forEach(function (diff, i) {
     if(diff.op === '='){ pathIndex++; }
     else if(diff.op === '!='){
       if(isMap(diff.val) && isMap(diff.newVal)){
         var mapDiffs = mapDiff(diff.val, diff.newVal, appendPath(path, pathIndex));
-        result = result.concat(mapDiffs);
+        ops = ops.concat(mapDiffs);
       }
       else{
-        result.push(op('replace', appendPath(path, pathIndex), diff.newVal));
+        ops.push(op('replace', appendPath(path, pathIndex), diff.newVal));
       }
       pathIndex++;
     }
     else if(diff.op === '+'){
-      result.push(op('add', appendPath(path, pathIndex), diff.val));
+      ops.push(op('add', appendPath(path, pathIndex), diff.val));
       pathIndex++;
     }
-    else if(diff.op === '-'){ result.push(op('remove', appendPath(path, pathIndex))); }
+    else if(diff.op === '-'){ ops.push(op('remove', appendPath(path, pathIndex))); }
   });
 
-  return result;
+  return ops;
 };
 
 module.exports = function(a, b){
+  if(a != b && (a == null || b == null)){ return Immutable.fromJS([op('replace', '/', b)]); }
   if(isIndexed(a) && isIndexed(b)){
     return Immutable.fromJS(sequenceDiff(a, b));
   }

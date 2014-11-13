@@ -321,4 +321,24 @@ describe('Map diff', function(){
 
     assert.ok(Immutable.is(result, expected));
   });
+
+  it('replaces null for immutable value', function() {
+    var map1 = null;
+    var map2 = Immutable.fromJS({a: 1});
+
+    var result = diff(map1, map2);
+    var expected = Immutable.fromJS([{op: 'replace', path: '/', value: map2}]);
+
+    assert.ok(Immutable.is(result, expected));
+  });
+
+  it('replaces value for null', function() {
+    var map1 = Immutable.fromJS({a: 1});
+    var map2 = null;
+
+    var result = diff(map1, map2);
+    var expected = Immutable.fromJS([{op: 'replace', path: '/', value: map2}]);
+
+    assert.ok(Immutable.is(result, expected));
+  });
 });
