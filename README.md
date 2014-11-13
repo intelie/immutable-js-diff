@@ -19,5 +19,7 @@ var map1 = Immutable.Map({a:1, b:2, c:3});
 var map2 = Immutable.Map({a:1, b:2, c:3, d: 4});
 
 diff(map1, map2);
-// [ { op: 'add', path: '/d', value: 4 } ]
+// List [ Map { op: "add", path: "/d", value: 4 } ]
 ```
+
+The result of `diff` is an Immutable Sequence of operations
