@@ -3,7 +3,8 @@
 var Immutable = require('immutable');
 var utils = require('./utils');
 var lcs = require('./lcs');
-var appendPath = utils.appendPath,
+var path = require('./path');
+var concatPath = path.concat,
                   op = utils.op,
                   isMap = utils.isMap,
                   isIndexed = utils.isIndexed;
@@ -16,25 +17,25 @@ var mapDiff = function(a, b, p){
 
   a.forEach(function(aValue, aKey){
     if(!b.has(aKey)){
-      ops.push( op('remove', appendPath(path, aKey)) );
+      ops.push( op('remove', concatPath(path, aKey)) );
     }
     else if(isMap(b.get(aKey))){
-      ops = ops.concat(mapDiff(aValue, b.get(aKey), appendPath(path, aKey)));
+      ops = ops.concat(mapDiff(aValue, b.get(aKey), concatPath(path, aKey)));
     }
     else if(isIndexed(b.get(aKey)) && isIndexed(aValue)){
-      ops = ops.concat(sequenceDiff(aValue, b.get(aKey), appendPath(path, aKey)));
+      ops = ops.concat(sequenceDiff(aValue, b.get(aKey), concatPath(path, aKey)));
     }
   });
 
   b.forEach(function(bValue, bKey){
     if(!a.has(bKey)){
-      ops.push( op('add', appendPath(path, bKey), bValue) );
+      ops.push( op('add', concatPath(path, bKey), bValue) );
     }
     else{
       var aValue = a.get(bKey);
       var areDifferentValues = (aValue !== bValue) && !isMap(aValue) && !isIndexed(aValue);
       if(areDifferentValues) {
-        ops.push(op('replace', appendPath(path, bKey), bValue));
+        ops.push(op('replace', concatPath(path, bKey), bValue));
       }
     }
   });
@@ -55,19 +56,19 @@ var sequenceDiff = function (a, b, p) {
     if(diff.op === '='){ pathIndex++; }
     else if(diff.op === '!='){
       if(isMap(diff.val) && isMap(diff.newVal)){
-        var mapDiffs = mapDiff(diff.val, diff.newVal, appendPath(path, pathIndex));
+        var mapDiffs = mapDiff(diff.val, diff.newVal, concatPath(path, pathIndex));
         ops = ops.concat(mapDiffs);
       }
       else{
-        ops.push(op('replace', appendPath(path, pathIndex), diff.newVal));
+        ops.push(op('replace', concatPath(path, pathIndex), diff.newVal));
       }
       pathIndex++;
     }
     else if(diff.op === '+'){
-      ops.push(op('add', appendPath(path, pathIndex), diff.val));
+      ops.push(op('add', concatPath(path, pathIndex), diff.val));
       pathIndex++;
     }
-    else if(diff.op === '-'){ ops.push(op('remove', appendPath(path, pathIndex))); }
+    else if(diff.op === '-'){ ops.push(op('remove', concatPath(path, pathIndex))); }
   });
 
   return ops;

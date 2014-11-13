@@ -2,10 +2,6 @@
 
 var Immutable = require('immutable');
 
-var appendPath = function(path, key) {
-  return path + '/' + key;
-};
-
 var isMap = function(obj){ return Immutable.Iterable.isKeyed(obj); };
 var isIndexed = function(obj) { return Immutable.Iterable.isIndexed(obj); };
 
@@ -16,7 +12,6 @@ var op = function(operation, path, value){
 };
 
 module.exports = {
-  appendPath: appendPath,
   isMap: isMap,
   isIndexed: isIndexed,
   op: op
