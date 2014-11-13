@@ -5,6 +5,7 @@ var utils = require('./utils');
 var lcs = require('./lcs');
 var path = require('./path');
 var concatPath = path.concat,
+                  escape = path.escape,
                   op = utils.op,
                   isMap = utils.isMap,
                   isIndexed = utils.isIndexed;
@@ -17,25 +18,25 @@ var mapDiff = function(a, b, p){
 
   a.forEach(function(aValue, aKey){
     if(!b.has(aKey)){
-      ops.push( op('remove', concatPath(path, aKey)) );
+      ops.push( op('remove', concatPath(path, escape(aKey))) );
     }
     else if(isMap(b.get(aKey))){
-      ops = ops.concat(mapDiff(aValue, b.get(aKey), concatPath(path, aKey)));
+      ops = ops.concat(mapDiff(aValue, b.get(aKey), concatPath(path, escape(aKey))));
     }
     else if(isIndexed(b.get(aKey)) && isIndexed(aValue)){
-      ops = ops.concat(sequenceDiff(aValue, b.get(aKey), concatPath(path, aKey)));
+      ops = ops.concat(sequenceDiff(aValue, b.get(aKey), concatPath(path, escape(aKey))));
     }
   });
 
   b.forEach(function(bValue, bKey){
     if(!a.has(bKey)){
-      ops.push( op('add', concatPath(path, bKey), bValue) );
+      ops.push( op('add', concatPath(path, escape(bKey)), bValue) );
     }
     else{
       var aValue = a.get(bKey);
       var areDifferentValues = (aValue !== bValue) && !isMap(aValue) && !isIndexed(aValue);
       if(areDifferentValues) {
-        ops.push(op('replace', concatPath(path, bKey), bValue));
+        ops.push(op('replace', concatPath(path, escape(bKey)), bValue));
       }
     }
   });

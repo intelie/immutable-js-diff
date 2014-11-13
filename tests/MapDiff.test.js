@@ -363,4 +363,66 @@ describe('Map diff', function(){
       assert.ok(Immutable.is(result, expected));
     });
   });
+
+  describe('path escaping', function() {
+    it('add unescaped path', function() {
+      var map1 = Immutable.fromJS({'a': 1, 'b': {'c': 3}});
+      var map2 = Immutable.fromJS({'a': 1, 'b': {'c': 3, 'prop/prop': 4}});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([
+        {op: 'add', path: '/b/prop~1prop', value: 4}
+      ]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
+
+    it('replaces unescaped path', function() {
+      var map1 = Immutable.fromJS({'a': 1, 'b': {'c': 3, 'prop/prop': 4}});
+      var map2 = Immutable.fromJS({'a': 1, 'b': {'c': 3, 'prop/prop': 10}});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([
+        {op: 'replace', path: '/b/prop~1prop', value: 10}
+      ]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
+
+    it('removes unescaped path', function() {
+      var map1 = Immutable.fromJS({'a': 1, 'b': {'c': 3, 'prop/prop': 4}});
+      var map2 = Immutable.fromJS({'a': 1, 'b': {'c': 3}});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([
+        {op: 'remove', path: '/b/prop~1prop'}
+      ]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
+
+    it('add unescaped path in nested map', function() {
+      var map1 = Immutable.fromJS({'a': 1, 'test/test': {'c': 3}});
+      var map2 = Immutable.fromJS({'a': 1, 'test/test': {'c': 3, 'prop/prop': 4}});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([
+        {op: 'add', path: '/test~1test/prop~1prop', value: 4}
+      ]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
+
+    it('add unescaped path in nested sequence', function() {
+      var map1 = Immutable.fromJS({'a': 1, 'test/test': [0, 1, 2]});
+      var map2 = Immutable.fromJS({'a': 1, 'test/test': [0, 1, 2, 3]});
+
+      var result = diff(map1, map2);
+      var expected = Immutable.fromJS([
+        {op: 'add', path: '/test~1test/3', value: 3}
+      ]);
+
+      assert.ok(Immutable.is(result, expected));
+    });
+  });
 });
