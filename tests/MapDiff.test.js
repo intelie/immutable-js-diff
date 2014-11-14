@@ -425,4 +425,28 @@ describe('Map diff', function(){
       assert.ok(Immutable.is(result, expected));
     });
   });
+
+  it('replace primitive value for nested map', function() {
+    var map1 = Immutable.fromJS({a:false});
+    var map2 = Immutable.fromJS({a:{b:3}});
+
+    var result = diff(map1, map2);
+    var expected = Immutable.fromJS([
+      { op: 'replace', path: '/a', value: Immutable.fromJS({ b: 3 }) }
+    ]);
+
+    assert.ok(Immutable.is(result, expected));
+  });
+
+  it('replace nested map with primitive value', function() {
+    var map1 = Immutable.fromJS({a:{b:3}});
+    var map2 = Immutable.fromJS({a:false});
+
+    var result = diff(map1, map2);
+    var expected = Immutable.fromJS([
+      { op: 'replace', path: '/a', value: false }
+    ]);
+
+    assert.ok(Immutable.is(result, expected));
+  });
 });

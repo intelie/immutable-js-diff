@@ -16,28 +16,32 @@ var mapDiff = function(a, b, p){
 
   if(Immutable.is(a, b) || (a == b == null)){ return ops; }
 
-  a.forEach(function(aValue, aKey){
-    if(!b.has(aKey)){
-      ops.push( op('remove', concatPath(path, escape(aKey))) );
-    }
-    else if(isMap(b.get(aKey))){
-      ops = ops.concat(mapDiff(aValue, b.get(aKey), concatPath(path, escape(aKey))));
-    }
-    else if(isIndexed(b.get(aKey)) && isIndexed(aValue)){
-      ops = ops.concat(sequenceDiff(aValue, b.get(aKey), concatPath(path, escape(aKey))));
-    }
-  });
+  if(a.forEach){
+    a.forEach(function(aValue, aKey){
+      if(b.has(aKey)){
+        if(isMap(aValue) && isMap(b.get(aKey))){
+          ops = ops.concat(mapDiff(aValue, b.get(aKey), concatPath(path, escape(aKey))));
+        }
+        else if(isIndexed(b.get(aKey)) && isIndexed(aValue)){
+          ops = ops.concat(sequenceDiff(aValue, b.get(aKey), concatPath(path, escape(aKey))));
+        }
+        else {
+          var bValue = b.get ? b.get(aKey) : b;
+          var areDifferentValues = (aValue !== bValue);
+          if (areDifferentValues) {
+            ops.push(op('replace', concatPath(path, escape(aKey)), bValue));
+          }
+        }
+      }
+      else {
+        ops.push( op('remove', concatPath(path, escape(aKey))) );
+      }
+    });
+  }
 
   b.forEach(function(bValue, bKey){
-    if(!a.has(bKey)){
+    if(a.has && !a.has(bKey)){
       ops.push( op('add', concatPath(path, escape(bKey)), bValue) );
-    }
-    else{
-      var aValue = a.get(bKey);
-      var areDifferentValues = (aValue !== bValue) && !isMap(aValue) && !isIndexed(aValue);
-      if(areDifferentValues) {
-        ops.push(op('replace', concatPath(path, escape(bKey)), bValue));
-      }
     }
   });
 
@@ -75,11 +79,12 @@ var sequenceDiff = function (a, b, p) {
   return ops;
 };
 
-module.exports = function(a, b){
+var diff = function(a, b, p){
   if(a != b && (a == null || b == null)){ return Immutable.fromJS([op('replace', '/', b)]); }
   if(isIndexed(a) && isIndexed(b)){
     return Immutable.fromJS(sequenceDiff(a, b));
   }
-
   return Immutable.fromJS(mapDiff(a, b));
 };
+
+module.exports = diff;
