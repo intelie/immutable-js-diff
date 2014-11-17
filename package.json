@@ -28,6 +28,6 @@
     "jsondiff": "brenoferreira/json-diff"
   },
   "dependencies": {
-    "immutable": "^3.1.0"
+    "immutable": "^3.2.1"
   }
 }
