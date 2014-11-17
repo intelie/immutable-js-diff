@@ -156,4 +156,47 @@ describe('Sequence diff', function() {
       ]
     );
   });
+
+  it('large sequence diff', function() {
+    JSC.test(
+      'returns add',
+      function(veredict, array, newValue){
+        var list1 = Immutable.fromJS(array);
+        var list2 = Immutable.fromJS(array);
+        var modifiedList = list2.push(newValue);
+
+        var result = diff(list1, modifiedList);
+        var expected = Immutable.fromJS([
+          {op: 'add', path: '/'+array.length, value: newValue}
+        ]);
+
+        return veredict(Immutable.is(result, expected));
+      },
+      [
+        JSC.array(150, JSC.integer()),
+        JSC.integer()
+      ]
+    );
+
+    JSC.test(
+      'returns replace',
+      function(veredict, array, newValue){
+        var list1 = Immutable.fromJS(array);
+        var list2 = Immutable.fromJS(array);
+        var idx = 100;
+        var modifiedList = list2.set(idx, newValue);
+
+        var result = diff(list1, modifiedList);
+        var expected = Immutable.fromJS([
+          {op: 'replace', path: '/'+idx, value: newValue}
+        ]);
+
+        return veredict(Immutable.is(result, expected));
+      },
+      [
+        JSC.array(150, JSC.integer()),
+        JSC.integer()
+      ]
+    );
+  });
 });
