@@ -7,6 +7,9 @@ var escapedTildeRe = /~0/g;
 
 var Path = {
   escape: function (str) {
+    if(typeof(str) === 'number'){
+      return str.toString();
+    }
     if(typeof(str) !== 'string'){
       throw 'param str (' + str + ') is not a string';
     }

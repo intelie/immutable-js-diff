@@ -52,6 +52,7 @@ var sequenceDiff = function (a, b, p) {
   var ops = [];
   var path = p || '';
   if(Immutable.is(a, b) || (a == b == null)){ return ops; }
+  if(b.count() > 100) { return mapDiff(a.toMap(), b.toMap(), p); }
 
   var lcsDiff = lcs.diff(a, b);
 
