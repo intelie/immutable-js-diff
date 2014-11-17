@@ -80,12 +80,25 @@ var sequenceDiff = function (a, b, p) {
   return ops;
 };
 
+var primitiveTypeDiff = function (a, b, p) {
+  var path = p || '';
+  if(a === b){ return []; }
+  else{
+    return [ op('replace', concatPath(path, ''), b) ];
+  }
+};
+
 var diff = function(a, b, p){
   if(a != b && (a == null || b == null)){ return Immutable.fromJS([op('replace', '/', b)]); }
   if(isIndexed(a) && isIndexed(b)){
     return Immutable.fromJS(sequenceDiff(a, b));
   }
-  return Immutable.fromJS(mapDiff(a, b));
+  else if(isMap(a) && isMap(b)){
+    return Immutable.fromJS(mapDiff(a, b));
+  }
+  else{
+    return Immutable.fromJS(primitiveTypeDiff(a, b, p));
+  }
 };
 
 module.exports = diff;
