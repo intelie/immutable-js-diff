@@ -48,7 +48,7 @@ var ReplaceResult = Immutable.Record({op: '!=', val: null, newVal: null});
 var diff = function(xs, ys){
   var matrix = computeLcsMatrix(xs, ys);
 
-  return printDiff(matrix, xs, ys, xs.size, ys.size);
+  return printDiff(matrix, xs, ys, xs.size||0, ys.size||0);
 };
 
 var printDiff = function(matrix, xs, ys, i, j) {
@@ -87,8 +87,8 @@ var printDiff = function(matrix, xs, ys, i, j) {
  * @param ys Indexed Sequence 2
  */
 function computeLcsMatrix(xs, ys) {
-  var n = xs.size;
-  var m = ys.size;
+  var n = xs.size||0;
+  var m = ys.size||0;
   var a = makeMatrix(n + 1, m + 1, 0);
 
   for (var i = 0; i < n; i++) {
