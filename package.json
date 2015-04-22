@@ -1,6 +1,6 @@
 {
   "name": "immutablediff",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Create RFC 6902 style patches between Immutable.JS data structures",
   "main": "src/diff.js",
   "directories": {
