@@ -75,6 +75,35 @@ describe('Sequence diff', function() {
     assert.ok(Immutable.is(result, expected));
   });
 
+  it('returns correct diff when removing sequenced items in large list', function(){
+    var list1 = Immutable.Range(1, 1000);
+    var list2 = Immutable.Range(1, 900);
+
+    var expected = Immutable.Repeat(Immutable.Map({ op: 'remove', path: '/899' }), 100);
+
+    var result = diff(list1, list2);
+
+    assert.ok(Immutable.is(result, expected));
+  });
+
+  it('returns correct diff when removing multiple sequenced items in large list', function(){
+    var list1 = Immutable.Range(1, 1000);
+    var list2 = Immutable.Range(1, 900).concat(Immutable.Range(950, 955));
+
+    var expected = Immutable.List([
+      Immutable.Map({ op: "replace", path: "/899", value: 950 }),
+      Immutable.Map({ op: "replace", path: "/900", value: 951 }),
+      Immutable.Map({ op: "replace", path: "/901", value: 952 }),
+      Immutable.Map({ op: "replace", path: "/902", value: 953 }),
+      Immutable.Map({ op: "replace", path: "/903", value: 954 })
+    ]).concat(Immutable.Repeat(Immutable.Map({ op: 'remove', path: '/904' }), 95));
+
+    console.log(result);
+    var result = diff(list1, list2);
+
+    assert.ok(Immutable.is(result, expected));
+  });
+
   it('JSCheck', function () {
     JSC.test(
       'returns add when value is inserted in the middle of sequence',

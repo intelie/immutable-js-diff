@@ -16,6 +16,10 @@ var mapDiff = function(a, b, p){
 
   if(Immutable.is(a, b) || (a == b == null)){ return ops; }
 
+  var areLists = isIndexed(a) && isIndexed(b);
+  var lastKey = null;
+  var removeKey = null
+
   if(a.forEach){
     a.forEach(function(aValue, aKey){
       if(b.has(aKey)){
@@ -34,7 +38,15 @@ var mapDiff = function(a, b, p){
         }
       }
       else {
-        ops.push( op('remove', concatPath(path, escape(aKey))) );
+        if(areLists){
+          removeKey = (lastKey != null && (lastKey+1) === aKey) ? removeKey : aKey;
+          ops.push( op('remove', concatPath(path, escape(removeKey))) );
+          lastKey = aKey;
+        }
+        else{
+          ops.push( op('remove', concatPath(path, escape(aKey))) );
+        }
+        
       }
     });
   }
