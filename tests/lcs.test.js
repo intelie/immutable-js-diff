@@ -1,6 +1,6 @@
 'use strict';
 
-var Immutable = require('Immutable');
+var Immutable = require('immutable');
 var lcs = require('../src/lcs');
 var assert = require('assert');
 

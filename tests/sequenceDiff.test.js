@@ -1,7 +1,7 @@
 'use strict';
 
 var diff = require('../src/diff');
-var Immutable = require('Immutable');
+var Immutable = require('immutable');
 var JSC = require('jscheck');
 var assert = require('assert');
 

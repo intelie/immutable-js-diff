@@ -1,6 +1,6 @@
 'use strict';
 
-var Immutable = require('Immutable');
+var Immutable = require('immutable');
 var assert = require('assert');
 var diff = require('../src/diff');
 var jsonDiff = require('jsondiff');
