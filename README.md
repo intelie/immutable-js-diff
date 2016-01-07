@@ -23,3 +23,7 @@ diff(map1, map2);
 ```
 
 The result of `diff` is an Immutable Sequence of operations
+
+## Immutable Patch
+
+If you want to use the resulting diff to apply patches to other Immutable data structures, you can use the package `immutablepatch`. Source code available [here](https://github.com/intelie/immutable-js-patch)
