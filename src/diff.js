@@ -101,6 +101,7 @@ var primitiveTypeDiff = function (a, b, p) {
 };
 
 var diff = function(a, b, p){
+  if(Immutable.is(a, b)){ return Immutable.List(); }
   if(a != b && (a == null || b == null)){ return Immutable.fromJS([op('replace', '/', b)]); }
   if(isIndexed(a) && isIndexed(b)){
     return Immutable.fromJS(sequenceDiff(a, b));

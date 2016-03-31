@@ -228,4 +228,16 @@ describe('Sequence diff', function() {
       ]
     );
   });
+
+  it('Seq test', function(){
+    var setDiff = diff(Immutable.Set(['1']), Immutable.Set(['1']));
+    assert.equal(setDiff.size, 0);
+
+    setDiff = diff(Immutable.Set([1]), Immutable.Set([1,2,3]));
+    var expected = Immutable.fromJS([
+      {op: 'replace', path: '/', value: Immutable.Set([1,2,3])}
+    ]);
+
+    assert.ok(Immutable.is(setDiff, expected));
+  });
 });
