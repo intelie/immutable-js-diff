@@ -51,34 +51,45 @@ var diff = function(xs, ys){
   return printDiff(matrix, xs, ys, xs.size||0, ys.size||0);
 };
 
-var printDiff = function(matrix, xs, ys, i, j) {
-  if(i === 0 && j === 0) { return []; }
-  if (i > 0 && j > 0 && Immutable.is(xs.get(i-1), ys.get(j-1))) {
-    return printDiff(matrix, xs, ys, i - 1, j - 1).concat(new DiffResult({
-      op: '=',
-      val: xs.get(i - 1)
-    }));
-  }
-  else if (i > 0 && j > 0 && i === j && !Immutable.is(xs.get(i-1), ys.get(j-1))) {
-    return printDiff(matrix, xs, ys, i - 1, j - 1).concat(new ReplaceResult({
-      val: xs.get(i - 1),
-      newVal: ys.get(i - 1)
-    }));
-  }
-  else {
-    if (j > 0 && (i === 0 || matrix[i][j - 1] >= matrix[i - 1][j])) {
-      return printDiff(matrix, xs, ys, i, j - 1).concat(new DiffResult({
-        op: '+',
-        val: ys.get(j - 1)
+var printDiff = function(matrix, xs, ys, xSize, ySize) {
+  var diffArray = [];
+  var i = xSize - 1;
+  var j = ySize - 1;
+  while (i >= 0 || j >= 0) {
+    if (i >= 0 && j >= 0 && Immutable.is(xs.get(i), ys.get(j))) {
+      diffArray.push(new DiffResult({
+        op: '=',
+        val: xs.get(i)
       }));
+      i -= 1;
+      j -= 1;
     }
-    else if (i > 0 && (j === 0 || matrix[i][j - 1] < matrix[i - 1][j])) {
-      return printDiff(matrix, xs, ys, i - 1, j).concat(new DiffResult({
-        op: '-',
-        val: xs.get(i - 1)
+    else if (i >= 0 && j >= 0 && i === j && !Immutable.is(xs.get(i), ys.get(j))) {
+      diffArray.push(new ReplaceResult({
+      val: xs.get(i),
+      newVal: ys.get(i)
       }));
+      i -= 1;
+      j -= 1;
+    }
+    else {
+      if (j >= 0 && (i === -1 || matrix[i+1][j] >= matrix[i][j+1])) {
+        diffArray.push(new DiffResult({
+          op: '+',
+          val: ys.get(j)
+        }));
+        j -= 1;
+      }
+      else if (i >= 0 && (j === -1 || matrix[i+1][j] < matrix[i][j+1])){
+        diffArray.push(new DiffResult({
+          op: '-',
+          val: xs.get(i)
+        }));
+        i -= 1;
+      }
     }
   }
+  return diffArray.reverse();
 };
 
 /**
