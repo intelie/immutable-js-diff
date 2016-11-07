@@ -46,7 +46,7 @@ var mapDiff = function(a, b, p){
         else{
           ops.push( op('remove', concatPath(path, escape(aKey))) );
         }
-        
+
       }
     });
   }
@@ -64,7 +64,7 @@ var sequenceDiff = function (a, b, p) {
   var ops = [];
   var path = p || '';
   if(Immutable.is(a, b) || (a == b == null)){ return ops; }
-  if(b.count() > 100) { return mapDiff(a, b, p); }
+  if((a.count() + 1) * (b.count() + 1) >= 10000 ) { return mapDiff(a, b, p); }
 
   var lcsDiff = lcs.diff(a, b);
 
