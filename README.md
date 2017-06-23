@@ -1,8 +1,8 @@
-#Immutable Diff
+# Immutable Diff
 
 Create RFC 6902 style patches between Immutable.JS data structures, such as `Maps`, `Lists`, and `Sets`.
 
-##Getting Started
+## Getting Started
 
 Install `immutablediff` using npm.
 
